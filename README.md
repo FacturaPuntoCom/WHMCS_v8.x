@@ -1,5 +1,8 @@
 # WHMCS V8 Addon de Factura.com
 
+### Fixed
+- Se corrige la forma de aplicar el descuento, ahora se reparte el valor en todos los conceptos.
+## 2022-01-04
 
 ### Plugin WHMCS V8
 
