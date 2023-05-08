@@ -311,9 +311,15 @@ class CoreModule
                     }
                 }
 
-            } else {
+            }
+
+            if (!isset($itemsOrder[$key]->ClaveProdServ) || empty( $itemsOrder[$key]->ClaveProdServ)) {
                 $itemsOrder[$key]->ClaveProdServ = $Setting['ClaveProdServ'];
+            }
+            if (!isset($itemsOrder[$key]->ClaveUnidad) || empty($itemsOrder[$key]->ClaveUnidad)) {
                 $itemsOrder[$key]->ClaveUnidad = $Setting['ClaveUnidad'];
+            }
+            if (!isset($itemsOrder[$key]->Unidad) || empty($itemsOrder[$key]->Unidad)) {
                 $itemsOrder[$key]->Unidad = $Setting['Unidad'];
             }
 
