@@ -479,7 +479,7 @@ class CoreModule
     			'apellidos' => $clientData["general-apellidos"],
     			'email' => $clientData["general-email"],
     			'telefono' => $clientData["fiscal-telefono"],
-    			'razons' => $clientData["fiscal-nombre"],
+    			'razons' => htmlspecialchars_decode($clientData["fiscal-nombre"]),
     			'rfc' => $clientData["fiscal-rfc"],
                 'regimen' => $clientData["fiscal-regimen"],
     			'calle' => $clientData["fiscal-calle"],
@@ -534,7 +534,7 @@ class CoreModule
             $importeImpuesto = round(($productPrice * 0.16), 6);
 
             //Para productos cero pesos
-            if($importeImpuesto >=  0 && $importeImpuesto <=  1) {
+            if($importeImpuesto ==  0) {
                 $productPrice = 0.01;
                 $TipoFactor = 'Exento';
                 $importeImpuesto = 0;
@@ -846,7 +846,6 @@ class CoreModule
             '612' => 'Personas Físicas con Actividades Empresariales y Profesionales',
             '614' => 'Ingresos por intereses',
             '615' => 'Régimen de los ingresos por obtención de premios',
-            '616' => 'Ingresos por Dividendos (socios y accionistas)',
             '620' => 'Sociedades Cooperativas de Producción que optan por diferir sus ingresos',
             '621' => 'Incorporación Fiscal',
             '622' => 'Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras',
