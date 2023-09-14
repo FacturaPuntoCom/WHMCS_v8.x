@@ -852,6 +852,7 @@ class CoreModule
             '612' => 'Personas Físicas con Actividades Empresariales y Profesionales',
             '614' => 'Ingresos por intereses',
             '615' => 'Régimen de los ingresos por obtención de premios',
+            '616' => 'Sin obligaciones fiscales',
             '620' => 'Sociedades Cooperativas de Producción que optan por diferir sus ingresos',
             '621' => 'Incorporación Fiscal',
             '622' => 'Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras',
