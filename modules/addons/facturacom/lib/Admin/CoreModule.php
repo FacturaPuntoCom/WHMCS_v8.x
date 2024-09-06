@@ -145,6 +145,8 @@ class CoreModule
         $facturaInvoiceList = [];
         $invoicesObj = Capsule::table('tblinvoices')
             ->where('tblinvoices.userid', $UserID)
+            ->where('tblinvoices.status', 'Paid')
+            ->where('tblinvoices.total', '>', '0.00')
             ->get();
         $NumInvoices = [];
 
