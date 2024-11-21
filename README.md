@@ -1,5 +1,9 @@
 # WHMCS V8 Addon de Factura.com
 
+### Fixed
+- Se hicieron cambios para descargar el pdf con el nombre correcto
+## 2024-11-21
+
 ### Added
 - Se añade el regimen 616: sin obligaciones fiscales
 ### Added
