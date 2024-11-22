@@ -48,7 +48,7 @@
                 <td><a href="{$systemURL}admin/clientssummary.php?userid={$invoice.ReferenceClient}" target="_blank">{$invoice.ReferenceClient}</a></td>
                 <td><a href="{$systemURL}admin/invoices.php?action=edit&id={$invoice.NumOrder}" target="_blank">{$invoice.NumOrder}</a></td>
                 <td>  $ {$invoice.Total|number_format:2:".":","} </td>
-                <td><span class="{if $invoice.Status eq 'Cancelada'}alert-danger{else}alert-success{/if}">  {$invoice.Status} </span></td>
+                <td><span class="{if $invoice.Status eq 'cancelada'}alert-danger{else}alert-success{/if}">  {$invoice.Status} </span></td>
                 <td><a href="{$systemURL}modules/addons/facturacom/lib/downloadhandler.php?uid={$invoice.UID}&type=pdf&version={$invoice.Version}" target="_blank">PDF</a></td>
                 <td><a href="{$systemURL}modules/addons/facturacom/lib/downloadhandler.php?uid={$invoice.UID}&type=xml&version={$invoice.Version}" target="_blank">XML</a></td>
                 <td>
