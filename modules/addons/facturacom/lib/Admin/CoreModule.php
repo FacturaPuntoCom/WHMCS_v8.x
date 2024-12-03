@@ -699,7 +699,7 @@ class CoreModule
 
         $contentDisposition = $request->getHeaderLine('Content-Disposition');
         if (!empty($contentDisposition) && str_contains($contentDisposition, 'filename=')) {
-            $filename = trim(explode('filename=', $contentDisposition)[1] ?? '', '"');
+            $filename = trim(explode('filename=', $contentDisposition)[1], '"');
         } else {
             if ($params['type'] == 'pdf') {
                 $filename = 'CFDI - '. $params['uid'] . '.pdf';
