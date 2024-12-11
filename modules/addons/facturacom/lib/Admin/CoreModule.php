@@ -697,8 +697,17 @@ class CoreModule
             ],
         ]);
 
-        $filename = explode("=", $request->getHeader('Content-Disposition'));
-        $filename = $filename[1];
+        $contentDisposition = $request->getHeaderLine('Content-Disposition');
+        if (!empty($contentDisposition) && str_contains($contentDisposition, 'filename=')) {
+            $filename = trim(explode('filename=', $contentDisposition)[1], '"');
+        } else {
+            if ($params['type'] == 'pdf') {
+                $filename = 'CFDI - '. $params['uid'] . '.pdf';
+            } else {
+                $filename = 'CFDI - '. $params['uid'] . '.xml';
+            }
+        }
+        
 
         switch ($params['type']) {
             case 'xml':
