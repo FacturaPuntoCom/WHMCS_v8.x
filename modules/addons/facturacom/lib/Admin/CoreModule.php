@@ -780,8 +780,9 @@ class CoreModule
                 'F-PLUGIN' => '60db2b9bf9790c1f4826429aee141291a6090c37',
                 'Content-Type' => 'application/json',
             ]
-        ])->json();
+        ]);
 
+        $request = json_decode($request->getBody()->getContents(), true);
         return $request;
     }
 
