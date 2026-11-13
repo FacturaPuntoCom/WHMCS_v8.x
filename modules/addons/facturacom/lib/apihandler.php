@@ -30,6 +30,11 @@ if (isset($_POST['function'])) {
             error_log('Factura.com apihandler ' . $func . ': ' . $e->getMessage());
             $resultado = apiErrorResponse(null);
         }
+        // Keep the selected client so a retry updates it instead of creating a duplicate
+        if ($func === 'createInvoice' && is_array($resultado) && !isset($resultado['UID'])
+            && !empty($_POST['clientData']['clientUID'])) {
+            $resultado['UID'] = $_POST['clientData']['clientUID'];
+        }
     }
 }
 

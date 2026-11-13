@@ -650,21 +650,32 @@ class CoreModule
 
         //Conectamos con api factura.com y tramos todas las facturas
         $restApi = new Client;
-        $createInvoice = $restApi->post($uri, [
-            'json' => $invoiceData,
-            'headers' => [
-                'F-API-KEY' => $Setting['ApiKey'],
-                'F-SECRET-KEY' => $Setting['ApiSecret'],
-                'F-PLUGIN' => '60db2b9bf9790c1f4826429aee141291a6090c37',
-                'Content-Type' => 'application/json',
-            ],
-        ]);
-        
-        $createInvoice = json_decode($createInvoice->getBody()->getContents(), true);
+        try {
+            $createInvoice = $restApi->post($uri, [
+                'json' => $invoiceData,
+                'headers' => [
+                    'F-API-KEY' => $Setting['ApiKey'],
+                    'F-SECRET-KEY' => $Setting['ApiSecret'],
+                    'F-PLUGIN' => '60db2b9bf9790c1f4826429aee141291a6090c37',
+                    'Content-Type' => 'application/json',
+                ],
+            ]);
+            $createInvoice = json_decode($createInvoice->getBody()->getContents(), true);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            error_log('Factura.com createInvoice: ' . $e->getMessage());
+            $createInvoice = $e->hasResponse()
+                ? json_decode((string) $e->getResponse()->getBody(), true)
+                : null;
+            if (!is_array($createInvoice) || !isset($createInvoice['message'])) {
+                $createInvoice = ['message' => 'No fue posible completar la solicitud con Factura.com.'];
+            }
+            $createInvoice['response'] = 'error';
+        }
         $response = $createInvoice;
 
-        if($response['response'] == 'error' && is_array($response['message'])) {
-            $response = ['response' => 'error', 'message' => $response['message']['message'], 'UID' => $clientFactura['Data']['UID']];
+        if($response['response'] == 'error') {
+            $message = is_array($response['message']) ? $response['message']['message'] : $response['message'];
+            $response = ['response' => 'error', 'message' => $message, 'UID' => $clientFactura['Data']['UID']];
         }
 
         return $response;
