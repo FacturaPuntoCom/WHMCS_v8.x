@@ -27,7 +27,7 @@ function facturacom_config()
 {
     $configarray = [
         'name' => 'Factura.com',
-        'version' => '2.1.2',
+        'version' => '2.1.3',
         'author' => 'Factura.com',
         'logo' => '../modules/addons/facturacom/factura-addon-icon.png',
         'description' => 'Módulo de integración con el servicio de

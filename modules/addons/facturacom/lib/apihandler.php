@@ -3,6 +3,8 @@
 //namespace WHMCS\Module\Addon\Facturacom;
 use WHMCS\Module\Addon\Facturacom\Admin\CoreModule;
 
+ob_start();
+
 require_once '../../../../init.php';
 
 /**
@@ -11,20 +13,55 @@ require_once '../../../../init.php';
  * @copyright (c) Octuber 2015, Factura.com
  */
 header('Access-Control-Allow-Methods:POST');
-header('Access-Control-Allow-Origin: https://api.factura.com, https://sandbox.factura.com, https://factura.com');
-#header('Access-Control-Allow-Credentials : true');
+
+$resultado = array("Error" => "Fail");
 
 if (isset($_POST['function'])) {
-    $resultado = null;
     $func = $_POST['function'];
     if(in_array($func, ['cancelInvoice', 'sendInvoice', 'loadInvoicesTable', 'getLocation', 'getClient', 'createInvoice'])){
-        $resultado = $func();
-        echo json_encode($resultado);
-    } else{
-        echo json_encode(array("Error" => "Fail"));
+        try {
+            $resultado = $func();
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            error_log('Factura.com apihandler ' . $func . ': ' . $e->getMessage());
+            $resultado = apiErrorResponse($e->hasResponse()
+                ? (string) $e->getResponse()->getBody()
+                : null);
+        } catch (\Throwable $e) {
+            error_log('Factura.com apihandler ' . $func . ': ' . $e->getMessage());
+            $resultado = apiErrorResponse(null);
+        }
+        // Keep the selected client so a retry updates it instead of creating a duplicate
+        if ($func === 'createInvoice' && is_array($resultado) && !isset($resultado['UID'])
+            && !empty($_POST['clientData']['clientUID'])) {
+            $resultado['UID'] = $_POST['clientData']['clientUID'];
+        }
     }
-} else {
-    echo json_encode(array("Error" => "Fail"));
+}
+
+// Discard any PHP notices/deprecations printed so the response is always valid JSON
+while (ob_get_level() > 0) {
+    ob_end_clean();
+}
+header('Content-Type: application/json; charset=utf-8');
+echo json_encode($resultado);
+
+/**
+ * @param String|null $apiBody
+ * @return Array
+ */
+function apiErrorResponse($apiBody)
+{
+    $message = 'No fue posible completar la solicitud con Factura.com.';
+    $decoded = is_string($apiBody) ? json_decode($apiBody, true) : null;
+    if (is_array($decoded) && isset($decoded['message']) && is_string($decoded['message'])) {
+        $message = $decoded['message'];
+    }
+
+    return array(
+        'status' => 'error',
+        'response' => 'error',
+        'message' => $message,
+    );
 }
 
 /**
