@@ -3,6 +3,8 @@
 //namespace WHMCS\Module\Addon\Facturacom;
 use WHMCS\Module\Addon\Facturacom\Admin\CoreModule;
 
+ob_start();
+
 require_once '../../../../init.php';
 
 /**
@@ -11,20 +13,47 @@ require_once '../../../../init.php';
  * @copyright (c) Octuber 2015, Factura.com
  */
 header('Access-Control-Allow-Methods:POST');
-header('Access-Control-Allow-Origin: https://api.factura.com, https://sandbox.factura.com, https://factura.com');
-#header('Access-Control-Allow-Credentials : true');
+
+$resultado = array("Error" => "Fail");
 
 if (isset($_POST['function'])) {
-    $resultado = null;
     $func = $_POST['function'];
     if(in_array($func, ['cancelInvoice', 'sendInvoice', 'loadInvoicesTable', 'getLocation', 'getClient', 'createInvoice'])){
-        $resultado = $func();
-        echo json_encode($resultado);
-    } else{
-        echo json_encode(array("Error" => "Fail"));
+        try {
+            $resultado = $func();
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $resultado = apiErrorResponse($e->hasResponse()
+                ? (string) $e->getResponse()->getBody()
+                : $e->getMessage());
+        } catch (\Throwable $e) {
+            $resultado = apiErrorResponse($e->getMessage());
+        }
     }
-} else {
-    echo json_encode(array("Error" => "Fail"));
+}
+
+// Discard any PHP notices/deprecations printed so the response is always valid JSON
+while (ob_get_level() > 0) {
+    ob_end_clean();
+}
+header('Content-Type: application/json; charset=utf-8');
+echo json_encode($resultado);
+
+/**
+ * @param String $message
+ * @return Array
+ */
+function apiErrorResponse($message)
+{
+    $decoded = json_decode($message, true);
+    if (is_array($decoded) && isset($decoded['message'])) {
+        $message = $decoded['message'];
+    }
+
+    return array(
+        'status' => 'error',
+        'response' => 'error',
+        'message' => $message,
+    );
 }
 
 /**

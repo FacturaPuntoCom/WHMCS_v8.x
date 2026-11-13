@@ -1,6 +1,10 @@
 # WHMCS V8 Addon de Factura.com
 
 ### Fixed
+- La consulta de cliente por RFC ya no se queda en "buscando cliente..." en WHMCS 8.13 / PHP 8.1+: apihandler.php siempre responde JSON válido (descarta warnings/deprecations y captura excepciones de la API), el área de clientes usa una URL relativa y muestra un mensaje si la consulta falla.
+## 2026-11-13
+
+### Fixed
 - Se hicieron cambios para descargar el pdf con el nombre correcto
 ## 2024-11-21
 

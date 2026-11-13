@@ -16,7 +16,7 @@ class CoreModule
 
     public function getGonfiguration()
     {
-        $setting = false;
+        $setting = [];
         $settings = Capsule::table('tbladdonmodules')->where('module', 'facturacom')->get();
 
         if (!is_null($settings)) {
