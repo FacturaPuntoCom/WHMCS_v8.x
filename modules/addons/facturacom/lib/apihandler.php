@@ -22,11 +22,13 @@ if (isset($_POST['function'])) {
         try {
             $resultado = $func();
         } catch (\GuzzleHttp\Exception\RequestException $e) {
+            error_log('Factura.com apihandler ' . $func . ': ' . $e->getMessage());
             $resultado = apiErrorResponse($e->hasResponse()
                 ? (string) $e->getResponse()->getBody()
-                : $e->getMessage());
+                : null);
         } catch (\Throwable $e) {
-            $resultado = apiErrorResponse($e->getMessage());
+            error_log('Factura.com apihandler ' . $func . ': ' . $e->getMessage());
+            $resultado = apiErrorResponse(null);
         }
     }
 }
@@ -39,13 +41,14 @@ header('Content-Type: application/json; charset=utf-8');
 echo json_encode($resultado);
 
 /**
- * @param String $message
+ * @param String|null $apiBody
  * @return Array
  */
-function apiErrorResponse($message)
+function apiErrorResponse($apiBody)
 {
-    $decoded = json_decode($message, true);
-    if (is_array($decoded) && isset($decoded['message'])) {
+    $message = 'No fue posible completar la solicitud con Factura.com.';
+    $decoded = is_string($apiBody) ? json_decode($apiBody, true) : null;
+    if (is_array($decoded) && isset($decoded['message']) && is_string($decoded['message'])) {
         $message = $decoded['message'];
     }
 
